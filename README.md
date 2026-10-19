@@ -7,6 +7,8 @@ Landing page conceitual de um show **imaginário** do Tame Impala no Brasil, com
 ## What's inside
 
 - Hero com título, linhas animadas em SVG e uma esfera cromada
+- Quem é Tame Impala: o projeto de Kevin Parker e cards dos cinco álbuns, de *Innerspeaker* a *Deadbeat*, com faixas de destaque
+- Linha do tempo em zigue-zague, de 2007 a 2026, com esferas cromadas ligadas por um fio colorido que vai e volta
 - Datas imaginárias (São Paulo, Rio de Janeiro, Belo Horizonte, Brasília e Porto Alegre), because the less I know, the better
 - Setlist dos sonhos, uma lista de desejos de fã
 - Cards de setores: Pista, Camarote e Arquibancada (botões desativados)
