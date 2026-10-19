@@ -7,70 +7,159 @@
 <meta name="description" content="Landing page conceitual e fictícia de um show imaginário do Tame Impala no Brasil. Projeto de fã, sem fins comerciais.">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0b0414; --plum:#1a0b33; --violet:#4a2a8a; --lilac:#c9b3f5; --mist:#efe8fc;
-    --gold:#f2c53d; --amber:#ff9d1a; --pink:#ff2d7a; --red:#ff3b3b;
-    --display:'Unbounded',sans-serif;
+    --gold:#f2c53d; --amber:#ff9d1a; --pink:#ff2d7a; --red:#ff3b3b; --cyan:#3df2ff;
+    --panel:rgba(18,7,38,.92); --line:rgba(169,139,224,.35); --grid:rgba(169,139,224,.07);
+    --display:'Unbounded',sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
-    font-family:'Manrope',sans-serif;font-size:17px;color:#efe8fc;background:var(--ink);line-height:1.6;overflow-x:hidden;
-    background-image:repeating-linear-gradient(100deg,transparent 0 9px,rgba(169,139,224,.07) 9px 11px);
+    font-family:'Manrope',sans-serif;font-size:17px;color:#efe8fc;background:var(--ink);line-height:1.6;overflow-x:hidden;counter-reset:sec;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:44px 44px;
   }
+  /* Linhas de varredura, bem sutis, por cima de tudo */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
   .wrap{width:min(1040px,100% - 32px);margin-inline:auto}
-  .caps{text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+  .caps{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+  html:not(.js) .js-only{display:none!important}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* Cantoneiras de HUD */
+  .hud{position:relative}
+  .hud::before{content:"";position:absolute;inset:-1px;pointer-events:none;--c:var(--gold);--l:14px;
+    background:
+      linear-gradient(var(--c),var(--c)) 0 0/var(--l) 2px,linear-gradient(var(--c),var(--c)) 0 0/2px var(--l),
+      linear-gradient(var(--c),var(--c)) 100% 0/var(--l) 2px,linear-gradient(var(--c),var(--c)) 100% 0/2px var(--l),
+      linear-gradient(var(--c),var(--c)) 0 100%/var(--l) 2px,linear-gradient(var(--c),var(--c)) 0 100%/2px var(--l),
+      linear-gradient(var(--c),var(--c)) 100% 100%/var(--l) 2px,linear-gradient(var(--c),var(--c)) 100% 100%/2px var(--l);
+    background-repeat:no-repeat}
 
   .banner{position:sticky;top:0;z-index:50;background:var(--gold);color:var(--ink);text-align:center;
     font-size:.9rem;font-weight:700;letter-spacing:.04em;padding:10px 16px;line-height:1.4}
   .banner .short{display:none}
+  .progress{display:none;position:absolute;left:0;bottom:-3px;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);
+    background:linear-gradient(90deg,var(--pink),var(--red),var(--amber))}
+  .js .progress{display:block}
 
   /* Hero */
   .hero{position:relative;min-height:100vh;min-height:100svh;overflow:hidden;background:linear-gradient(180deg,#2a1260 0%,#150a30 55%,#0b0414 100%)}
   #art{position:absolute;inset:0;width:100%;height:100%}
   .veil{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 30%,rgba(11,4,20,.88),rgba(11,4,20,0) 80%),linear-gradient(180deg,rgba(11,4,20,.7),rgba(11,4,20,0) 140px)}
-  nav{position:relative;z-index:3;display:flex;justify-content:flex-end;align-items:center;padding:22px 0}
-  nav .logo{color:var(--gold);font-size:.95rem;text-shadow:0 1px 10px rgba(11,4,20,.9)}
-  nav ul{display:flex;gap:26px;list-style:none}
-  nav a{color:var(--gold);text-decoration:none;font-size:.95rem;text-shadow:0 1px 10px rgba(11,4,20,.9);padding:6px 2px}
-  nav a:hover{color:#fff}
-  .hero-content{position:relative;z-index:3;text-align:center;padding-top:7vh}
-  .eyebrow{color:var(--gold);font-size:.95rem;text-shadow:0 1px 12px rgba(11,4,20,.95)}
+  .hud-frame{position:absolute;inset:14px;z-index:2;pointer-events:none}
+  .hud-frame::before{--c:rgba(242,197,61,.7);--l:28px}
+  .readout{position:absolute;bottom:26px;z-index:3;font:400 .72rem/1.6 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--lilac);text-shadow:0 1px 8px rgba(11,4,20,.9)}
+  .readout b{color:var(--gold);font-weight:600}
+  .readout.l{left:36px}.readout.r{right:36px;text-align:right}
+  nav{position:relative;z-index:3;display:flex;justify-content:flex-end;align-items:center;gap:20px;padding:24px 0}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red)}
+  .js .dot{animation:blink 1.6s steps(1) infinite}
+  nav ul{display:flex;gap:20px;list-style:none;flex-wrap:wrap;justify-content:flex-end}
+  nav a{color:var(--gold);text-decoration:none;font-size:.78rem;text-shadow:0 1px 10px rgba(11,4,20,.9);padding:6px 2px;border-bottom:1px solid transparent}
+  nav a:hover{color:#fff;border-bottom-color:var(--pink)}
+  .hero-content{position:relative;z-index:3;text-align:center;padding-top:6vh}
+  .eyebrow{color:var(--gold);font-size:.85rem;text-shadow:0 1px 12px rgba(11,4,20,.95)}
   .hero h1{font-family:var(--display);font-weight:700;color:var(--gold);text-transform:uppercase;
-    font-size:clamp(2.6rem,9.5vw,7rem);line-height:.98;letter-spacing:0;margin:16px 0 14px;text-shadow:0 2px 24px rgba(11,4,20,.7)}
+    font-size:clamp(2.6rem,9.5vw,7rem);line-height:.98;letter-spacing:0;margin:14px 0 14px;text-shadow:0 2px 24px rgba(11,4,20,.7)}
+  .js .hero h1{animation:glitch 7s infinite}
   .sub{max-width:520px;margin-inline:auto;font-size:clamp(1.1rem,2.6vw,1.3rem);color:#fff;text-shadow:0 1px 14px rgba(11,4,20,1),0 0 28px rgba(11,4,20,.9)}
-  .cta{display:inline-block;margin-top:28px;padding:14px 30px;border:2px solid var(--gold);color:var(--gold);text-decoration:none;
-    font-size:.95rem;font-weight:700;background:rgba(11,4,20,.85);transition:background .25s,color .25s}
+  .countdown{display:none;justify-content:center;margin-top:30px;text-shadow:0 1px 12px rgba(11,4,20,1)}
+  .js .countdown{display:flex}
+  .cd{min-width:74px;padding:0 16px}
+  .cd+.cd{border-left:1px solid rgba(201,179,245,.3)}
+  .cd b{display:block;font:400 1.6rem/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums}
+  .cd small{display:block;margin-top:6px;font:400 .6rem var(--mono);letter-spacing:.2em;color:var(--lilac)}
+  .ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px}
+  .cta{display:inline-block;padding:14px 26px;border:2px solid var(--gold);color:var(--gold);text-decoration:none;
+    font-size:.82rem;background:rgba(11,4,20,.85);transition:background .25s,color .25s}
   .cta:hover{background:var(--gold);color:var(--ink)}
+  .cta.alt{border-color:var(--cyan);color:var(--cyan)}
+  .cta.alt:hover{background:var(--cyan);color:var(--ink)}
 
-  section{padding:96px 0;position:relative;scroll-margin-top:44px}
-  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+  section{padding:96px 0;position:relative;scroll-margin-top:44px;counter-increment:sec}
+  a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
   h2{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.01em;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--gold);margin-bottom:10px}
-  .lead{max-width:560px;color:var(--mist);font-size:1.1rem}
+  h2::before{content:counter(sec,decimal-leading-zero) " // " attr(data-k);display:block;font:400 .78rem var(--mono);letter-spacing:.22em;color:var(--lilac);margin-bottom:12px}
+  .lead{max-width:600px;color:var(--mist);font-size:1.1rem}
 
+  .btn{font:600 .74rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mist);background:rgba(169,139,224,.08);
+    border:1px solid rgba(169,139,224,.45);padding:9px 12px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+  .btn:hover{border-color:var(--gold);color:#fff}
+  .btn[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+  input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer}
+
+  /* Medidores (perfil sonoro) */
+  .meters{display:grid;gap:8px}
+  .meter{display:grid;grid-template-columns:110px 1fr 30px;align-items:center;gap:10px;font:400 .74rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--lilac)}
+  .meter i{position:relative;height:6px;background:rgba(169,139,224,.18);overflow:hidden}
+  .meter i::after{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--v)*1%);background:linear-gradient(90deg,var(--pink),var(--amber))}
+  .meter b{color:#fff;font-weight:600;text-align:right}
 
   /* Quem é */
   .about-grid{margin-top:36px;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
   .about-text p{color:var(--mist);font-size:1.1rem;margin-bottom:18px}
   .about-text strong{color:var(--gold);font-weight:600}
   .facts{display:grid;gap:12px;list-style:none}
-  .facts li{padding:18px 22px;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);border-left:4px solid var(--amber)}
-  .facts b{display:block;color:var(--gold);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+  .facts li{padding:18px 22px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--amber)}
+  .facts b{display:block;color:var(--gold);font:600 .74rem var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
   .facts span{color:#fff;font-size:1.05rem}
 
-  .albums{margin-top:64px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-  .album{padding:22px 18px 20px;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);transition:transform .3s,border-color .3s}
-  .album:hover{transform:translateY(-6px);border-color:var(--gold)}
+  /* Discografia */
+  .albums{margin-top:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .album{display:flex;flex-direction:column;padding:22px 18px 18px;background:var(--panel);border:1px solid var(--line);transition:transform .3s,border-color .3s,box-shadow .3s}
+  .album:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 14px 40px -18px var(--accent)}
+  .album .code{position:absolute;top:14px;right:14px;font:400 .66rem var(--mono);letter-spacing:.14em;color:var(--lilac)}
   .orb{width:64px;height:64px;border-radius:50%;margin-bottom:16px;box-shadow:0 0 30px var(--halo)}
-  .album .yr{color:var(--lilac);font-size:.82rem;letter-spacing:.16em;font-weight:600}
+  .album:hover .orb{box-shadow:0 0 0 3px rgba(11,4,20,1),0 0 0 4px var(--accent),0 0 40px var(--halo)}
+  .yr{color:var(--lilac);font:600 .76rem var(--mono);letter-spacing:.16em}
   .album h3{color:var(--gold);font-size:1.15rem;line-height:1.25;margin:2px 0 8px}
-  .album p{color:var(--mist);font-size:.95rem;line-height:1.5}
-  .album ul{list-style:none;margin-top:12px;border-top:1px solid rgba(169,139,224,.25);padding-top:10px}
-  .album li{color:#fff;font-size:.92rem;padding:3px 0}
-  .album li::before{content:"◦ ";color:var(--pink)}
+  .album > p{color:var(--mist);font-size:.95rem;line-height:1.5}
+  .album > ul{list-style:none;margin:12px 0 14px;border-top:1px solid rgba(169,139,224,.25);padding-top:10px}
+  .album > ul li{color:#fff;font-size:.92rem;padding:3px 0}
+  .album > ul li::before{content:"◦ ";color:var(--pink)}
+  .album-more{margin-top:auto}
+  .album-more summary{list-style:none;cursor:pointer;font:600 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+    padding:9px 10px;border:1px solid rgba(242,197,61,.5);text-align:center;transition:background .2s,color .2s}
+  .album-more summary::-webkit-details-marker{display:none}
+  .album-more summary::before{content:"+ "}
+  .album-more[open] summary::before{content:"− "}
+  .album:hover summary,.album-more summary:hover{background:var(--gold);color:var(--ink)}
+  .js .album-more summary::after{content:"";position:absolute;inset:0}
+  .album-more .more-body{margin-top:16px}
 
+  .more-body .kicker{font:600 .74rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+  .more-body p{color:var(--mist);font-size:.98rem;margin-bottom:14px}
+  .more-body h4{font:600 .72rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--lilac);margin:20px 0 10px}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(169,139,224,.25);border:1px solid rgba(169,139,224,.25)}
+  .spec div{background:#120726;padding:10px 14px}
+  .spec dt{font:400 .66rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--lilac)}
+  .spec dd{color:#fff;font-size:.92rem;line-height:1.4}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none}
+  .chips li{font-size:.8rem;font-weight:600;letter-spacing:.04em;color:var(--lilac);border:1px solid rgba(201,179,245,.5);padding:4px 10px}
+  .more-body .trivia{margin-top:18px;padding:12px 14px;border-left:3px solid var(--cyan);background:rgba(61,242,255,.06);font-size:.92rem}
+  .more-body .trivia::before{content:"> nota de fã: ";font:600 .72rem var(--mono);color:var(--cyan);letter-spacing:.06em}
+
+  /* Ficha (janela modal) */
+  .ficha{width:min(900px,100% - 32px);max-height:min(90vh,900px);margin:auto;padding:0;border:1px solid var(--accent,var(--gold));background:#120726;color:var(--mist);overflow:auto;
+    box-shadow:0 0 80px -20px var(--accent,var(--gold))}
+  .ficha::backdrop{background:rgba(11,4,20,.78);backdrop-filter:blur(6px)}
+  .ficha[open]{animation:pop .35s cubic-bezier(.2,.8,.3,1)}
+  .ficha-in{display:grid;grid-template-columns:220px 1fr;gap:36px;padding:40px 36px 34px}
+  .f-side{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+  .f-orb{position:relative;width:180px;height:180px;display:grid;place-items:center}
+  .f-orb::before,.f-orb::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px dashed var(--accent);animation:spin 18s linear infinite}
+  .f-orb::after{inset:16px;border:2px solid transparent;border-left-color:var(--accent);border-right-color:var(--accent);animation-duration:7s;animation-direction:reverse}
+  .f-orb .orb{width:116px;height:116px;margin:0}
+  .f-code{color:var(--lilac);font-size:.72rem}
+  .f-nav{display:flex;align-items:center;gap:10px}
+  .f-nav .btn{width:40px;padding:8px 0;font-size:1rem}
+  .f-count{font-size:.72rem;color:var(--mist)}
+  .f-main h3{font-family:var(--display);font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;color:var(--gold);margin:4px 0 14px}
+  .f-close{position:absolute;top:12px;right:12px;width:40px;height:40px;font-size:1.4rem;line-height:1;padding:0}
+  .ficha.show .meter i::after{animation:fill 1s cubic-bezier(.2,.8,.3,1)}
 
   /* Linha do tempo em zigue-zague */
   .timeline-sec{background:linear-gradient(180deg,transparent,rgba(74,42,138,.3) 30%,rgba(74,42,138,.3) 70%,transparent)}
@@ -85,7 +174,7 @@
   .tl-node{position:absolute;top:10px;right:45px;width:30px;height:30px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#fff,#d7d3e0 18%,#6f6a7d 50%,#1c1828 85%);box-shadow:0 0 24px rgba(255,45,122,.6);z-index:1}
   .tl-item:nth-child(even) .tl-node{right:auto;left:45px}
-  .tl-card{padding:22px 24px;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);border-top:4px solid var(--pink);transition:transform .3s,border-color .3s}
+  .tl-card{padding:22px 24px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--pink);transition:transform .3s,border-color .3s}
   .tl-item:nth-child(even) .tl-card{border-top-color:var(--amber)}
   .tl-card:hover{border-color:var(--gold)}
   .js .tl-item.reveal{opacity:1;transform:none}
@@ -102,9 +191,6 @@
   .hourglass.flip svg{animation:flip .9s cubic-bezier(.6,0,.3,1) forwards}
   .hourglass .stream{stroke-dasharray:3 4;animation:fall .5s linear infinite}
   .hourglass.idle .stream{opacity:0}
-  @keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
-  @keyframes fall{to{stroke-dashoffset:-7}}
-  @keyframes flip{from{transform:rotate(0)}to{transform:rotate(180deg)}}
   .tl-item.passed .tl-node{box-shadow:0 0 0 3px var(--gold),0 0 28px rgba(242,197,61,.8)}
 
   .tl-item:hover .tl-node{transform:scale(1.25)}
@@ -114,45 +200,116 @@
   .tl-songs{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;list-style:none}
   .tl-songs li{font-size:.8rem;font-weight:600;letter-spacing:.06em;color:var(--lilac);border:1px solid rgba(201,179,245,.5);padding:4px 10px}
 
+  /* Laboratório de som */
+  .lab-grid{margin-top:40px;display:grid;grid-template-columns:1.35fr 1fr;gap:36px;align-items:start}
+  .scope{padding:16px;background:var(--panel);border:1px solid var(--line)}
+  .scope-top{display:flex;justify-content:space-between;gap:10px;font-size:.68rem;color:var(--lilac);margin-bottom:10px}
+  .scope-top #lab-era{color:var(--gold)}
+  .rec{display:flex;align-items:center;gap:6px;color:var(--red)}
+  #scope{display:block;width:100%;height:220px;background:#0b0414;border:1px solid rgba(169,139,224,.2)}
+  .eq{display:flex;gap:3px;align-items:flex-end;height:46px;margin-top:10px}
+  .eq i{flex:1;height:100%;background:linear-gradient(0deg,var(--pink),var(--amber));transform-origin:50% 100%;transform:scaleY(.08)}
+  .slider{margin-top:16px}
+  .era-ticks{display:flex;justify-content:space-between;margin-top:4px}
+  .era-ticks button{font:600 .7rem var(--mono);letter-spacing:.08em;color:var(--lilac);background:none;border:0;cursor:pointer;padding:6px 2px}
+  .era-ticks button:hover,.era-ticks button[aria-current=true]{color:var(--gold)}
+  .lab-k{font-size:.72rem;color:var(--pink)}
+  .lab-info h3{font-family:var(--display);font-size:1.9rem;line-height:1.1;color:var(--gold);margin:6px 0 12px}
+  .lab-info > p{color:var(--mist);margin-bottom:20px}
+  .lab-info .meters{margin-bottom:22px}
+  .note{margin-top:16px;font-size:.92rem;color:var(--lilac)}
+
+  /* Mesa de luz */
+  .stage-sec{background:linear-gradient(180deg,transparent,rgba(74,42,138,.25),transparent)}
+  .console{margin-top:40px;display:grid;grid-template-columns:1fr 290px;background:var(--panel);border:1px solid var(--line);
+    --b1:#b79cf0;--b2:#ff2d7a;--b3:#3df2ff;--int:.85;--spd:3.2s}
+  .stage{display:block;width:100%;height:auto;background:#0b0414}
+  .stage .stop1{stop-color:var(--b1)}.stage .stop2{stop-color:var(--b2)}.stage .stop3{stop-color:var(--b3)}
+  .beams{opacity:var(--int);transition:opacity .3s}
+  .js .beam{animation:beam var(--spd) ease-in-out infinite alternate}
+  .js .beam.r{animation-direction:alternate-reverse}
+  .lasers,.haze{display:none}
+  .console.lasers-on .lasers,.console.haze-on .haze{display:inline}
+  .lasers line{stroke:var(--b3)}
+  .js .lasers g{transform-origin:400px 150px;animation:sweep 6s ease-in-out infinite alternate}
+  .js .haze ellipse{animation:drift 10s ease-in-out infinite alternate}
+  .js .haze ellipse+ellipse{animation-duration:14s;animation-direction:alternate-reverse}
+  .console.pulse-on .beams{animation:pulse .5s ease-in-out infinite alternate}
+  .rings circle{transform-origin:400px 150px}
+  .js .rings circle{animation:ring 3.6s ease-out infinite}
+  .controls{padding:22px;border-left:1px solid rgba(169,139,224,.25);display:grid;gap:22px;align-content:start}
+  .controls fieldset{border:0;min-width:0}
+  .controls legend,.ctl-label{display:block;font:600 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--lilac);margin-bottom:8px}
+  .ctl-label output{float:right;color:var(--gold)}
+  .presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .presets .btn:last-child{grid-column:span 2}
+  .toggles{display:flex;flex-wrap:wrap;gap:6px}
+  .console-note{grid-column:1/-1;padding:12px 22px;border-top:1px solid rgba(169,139,224,.25);font:400 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--lilac)}
+
   /* Datas */
   .date-list{margin-top:36px;display:grid;gap:12px}
   .date{display:grid;grid-template-columns:100px 1fr auto;gap:22px;align-items:center;padding:20px 26px;
-    background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);border-left:4px solid var(--pink);transition:transform .3s,border-color .3s}
+    background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--pink);transition:transform .3s,border-color .3s}
   .date:hover{transform:translateX(8px);border-left-color:var(--amber)}
   .date .d{display:block;font-family:var(--display);font-weight:700;font-size:2.2rem;line-height:1;color:var(--gold)}
-  .date .d small{display:block;font-size:.85rem;letter-spacing:.18em;color:var(--lilac);margin-top:6px}
+  .date .d small{display:block;font:400 .78rem var(--mono);letter-spacing:.18em;color:var(--lilac);margin-top:6px}
   .date h3{font-size:1.25rem;font-weight:600;color:#fff}
   .date p{font-size:1rem;color:var(--mist)}
-  .tag{font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lilac);border:1px solid var(--lilac);padding:6px 12px}
+  .date .geo{font:400 .7rem var(--mono);letter-spacing:.1em;color:var(--lilac);margin-top:2px}
+  .tag{font:600 .74rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--lilac);border:1px solid var(--lilac);padding:6px 12px}
 
   .aside{margin-top:6px;color:var(--lilac);font-size:1.1rem}
 
   /* Setlist */
   .setlist{background:linear-gradient(180deg,transparent,rgba(74,42,138,.35),transparent)}
   .tracks{margin-top:32px;columns:2;column-gap:48px;list-style:none;counter-reset:t}
-  .tracks li{counter-increment:t;break-inside:avoid;padding:14px 0;border-bottom:1px solid rgba(169,139,224,.25);font-size:1.25rem;color:#fff}
-  .tracks li::before{content:counter(t,decimal-leading-zero);color:var(--gold);font-weight:700;font-size:.95rem;letter-spacing:.1em;margin-right:16px}
-  .note{margin-top:16px;font-size:.95rem;color:var(--lilac)}
+  .tracks li{display:flex;align-items:baseline;counter-increment:t;break-inside:avoid;padding:14px 0;border-bottom:1px solid rgba(169,139,224,.25);font-size:1.25rem;color:#fff}
+  .tracks li::before{content:counter(t,decimal-leading-zero);color:var(--gold);font:600 .9rem var(--mono);letter-spacing:.1em;margin-right:16px}
+  .tracks abbr{margin-left:auto;padding-left:12px;font:400 .68rem var(--mono);letter-spacing:.12em;color:var(--lilac);text-decoration:none;white-space:nowrap}
 
   /* Setores */
   .tier-row{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .tier{padding:34px 24px;border-radius:28px;text-align:center;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35)}
+  .tier{padding:34px 24px;text-align:center;background:var(--panel);border:1px solid var(--line)}
   .tier.hot{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 50px rgba(255,45,122,.25)}
-  .tier h3{font-size:1.2rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
+  .tier h3{font:600 1.05rem var(--mono);text-transform:uppercase;letter-spacing:.14em;color:var(--gold)}
   .tier .price{font-family:var(--display);font-size:2.4rem;font-weight:700;color:#fff;margin:10px 0}
   .tier p{font-size:1.05rem;color:var(--mist)}
-  .tier button{margin-top:18px;font:inherit;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-    padding:12px 24px;border-radius:999px;border:1px solid currentColor;background:rgba(169,139,224,.12);color:var(--mist);cursor:not-allowed}
+  .tier button{margin-top:18px;font:600 .8rem var(--mono);letter-spacing:.12em;text-transform:uppercase;
+    padding:12px 24px;border:1px solid currentColor;background:rgba(169,139,224,.12);color:var(--mist);cursor:not-allowed}
 
   footer{padding:70px 0 60px;text-align:center;border-top:1px solid rgba(169,139,224,.25)}
   footer .big{color:var(--gold);font-size:1.25rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
-
   footer .verse{margin-top:14px;font-style:italic;color:var(--lilac);font-size:1.15rem}
+  footer .build{margin-top:22px;font:400 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(201,179,245,.6)}
 
   .js .reveal{opacity:0;transform:translateY(32px);transition:opacity .8s,transform .8s}
   .js .reveal.in{opacity:1;transform:none}
 
+  @keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  @keyframes fall{to{stroke-dashoffset:-7}}
+  @keyframes flip{from{transform:rotate(0)}to{transform:rotate(180deg)}}
+  @keyframes blink{50%{opacity:0}}
+  @keyframes glitch{
+    0%,90%,100%{text-shadow:0 2px 24px rgba(11,4,20,.7);transform:none}
+    91%{text-shadow:-4px 0 var(--pink),4px 0 var(--cyan),0 2px 24px rgba(11,4,20,.7);transform:translateX(2px) skewX(-4deg)}
+    93%{text-shadow:4px 0 var(--pink),-4px 0 var(--cyan),0 2px 24px rgba(11,4,20,.7);transform:translateX(-3px)}
+    95%{text-shadow:-2px 0 var(--pink),2px 0 var(--cyan),0 2px 24px rgba(11,4,20,.7);transform:none}
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}}
+  @keyframes fill{from{width:0}}
+  @keyframes beam{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+  @keyframes sweep{from{transform:rotate(-18deg)}to{transform:rotate(18deg)}}
+  @keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+  @keyframes pulse{from{opacity:var(--int)}to{opacity:calc(var(--int)*.4)}}
+  @keyframes ring{from{transform:scale(.25);opacity:1}to{transform:scale(1.7);opacity:0}}
+
   @media (max-width:1000px){.albums{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:900px){
+    .lab-grid{grid-template-columns:1fr}
+    .console{grid-template-columns:1fr}
+    .controls{border-left:0;border-top:1px solid rgba(169,139,224,.25)}
+  }
   @media (max-width:820px){
     .tier-row{grid-template-columns:1fr}
     .about-grid{grid-template-columns:1fr;gap:28px}
@@ -166,23 +323,31 @@
     .date{grid-template-columns:1fr;text-align:center;gap:8px;border-left-width:1px;border-top:4px solid var(--pink)}
     .tag{justify-self:center}
     nav{flex-direction:column;gap:10px;padding:16px 0}
-    nav ul{gap:14px;flex-wrap:wrap;justify-content:center}
-    nav a,nav .logo{font-size:.85rem}
+    nav ul{gap:6px 14px;justify-content:center}
+    nav a{font-size:.72rem}
+    .readout{display:none}
     .banner .long{display:none}
     .banner .short{display:inline}
     .banner{font-size:.82rem;padding:8px 16px}
+    .ficha-in{grid-template-columns:1fr;gap:20px;padding:48px 20px 24px}
+    .f-orb{width:140px;height:140px}.f-orb .orb{width:90px;height:90px}
+    .spec{grid-template-columns:1fr}
   }
-  @media (max-width:480px){.albums{grid-template-columns:1fr}}
+  @media (max-width:480px){
+    .albums{grid-template-columns:1fr}
+    .cd{min-width:0;padding:0 12px}.cd b{font-size:1.25rem}
+    .meter{grid-template-columns:96px 1fr 28px}
+  }
   @media (prefers-reduced-motion:reduce){
     .hourglass svg,.hourglass .stream{animation:none!important}
-    *,*::before,*::after{transition:none!important}
+    *,*::before,*::after{transition:none!important;animation:none!important}
     .js .reveal,.js .tl-item .tl-card{opacity:1;transform:none}
   }
 </style>
 </head>
 <body>
 
-<div class="banner" role="note"><span class="long">Evento fictício, sem ligação oficial com Tame Impala ou seus representantes. Não há venda de ingressos.</span><span class="short">Evento fictício · Sem venda de ingressos</span></div>
+<div class="banner" role="note"><span class="long">Evento fictício, sem ligação oficial com Tame Impala ou seus representantes. Não há venda de ingressos.</span><span class="short">Evento fictício · Sem venda de ingressos</span><span class="progress" aria-hidden="true"></span></div>
 
 <header class="hero" id="topo">
   <svg id="art" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -203,23 +368,29 @@
     <ellipse cx="470" cy="552" rx="22" ry="13" fill="#fff" opacity=".75" transform="rotate(-30 470 552)"/>
   </svg>
   <div class="veil"></div>
+  <div class="hud-frame hud" aria-hidden="true"></div>
+  <p class="readout l" aria-hidden="true">Origem <b>Perth</b><br>31.95° S · 115.86° E</p>
+  <p class="readout r" aria-hidden="true">Destino <b>São Paulo</b><br>23.55° S · 46.63° O</p>
 
   <div class="wrap">
     <nav>
-      <ul><li><a class="caps" href="#quem">A banda</a></li><li><a class="caps" href="#linha-do-tempo">História</a></li><li><a class="caps" href="#datas">Datas</a></li><li><a class="caps" href="#setlist">Setlist</a></li><li><a class="caps" href="#ingressos">Setores</a></li></ul>
+      <ul><li><a class="caps" href="#quem">A banda</a></li><li><a class="caps" href="#discografia">Discografia</a></li><li><a class="caps" href="#linha-do-tempo">História</a></li><li><a class="caps" href="#som">Som</a></li><li><a class="caps" href="#palco">Palco</a></li><li><a class="caps" href="#datas">Datas</a></li><li><a class="caps" href="#setlist">Setlist</a></li><li><a class="caps" href="#ingressos">Setores</a></li></ul>
     </nav>
     <div class="hero-content">
       <span class="eyebrow caps">Turnê · Brasil 2027</span>
       <h1>Tame<br>Impala</h1>
       <p class="sub"><span lang="en">Let the world disappear for a while. We’ll meet on the dance floor.</span></p>
-      <a class="cta caps" href="#datas">Ver as datas</a>
+      <div class="countdown" data-target="2027-11-12T21:00:00-03:00" aria-hidden="true">
+        <div class="cd"><b>000</b><small>DIAS</small></div><div class="cd"><b>00</b><small>HRS</small></div><div class="cd"><b>00</b><small>MIN</small></div><div class="cd"><b>00</b><small>SEG</small></div>
+      </div>
+      <div class="ctas"><a class="cta caps" href="#datas">Ver as datas</a><a class="cta alt caps" href="#som">Explorar o som</a></div>
     </div>
   </div>
 </header>
 
 <section class="about" id="quem">
   <div class="wrap">
-    <h2 class="reveal">Quem é Tame Impala</h2>
+    <h2 class="reveal" data-k="perfil">Quem é Tame Impala</h2>
     <div class="about-grid">
       <div class="about-text reveal">
         <p>Tame Impala é o projeto musical de <strong>Kevin Parker</strong>, de Perth, na Austrália. Começou em 2007 como psicodelia de garagem, cheia de guitarras com fuzz e bateria pesada, e foi se transformando em algo mais sintético, dançante e confessional.</p>
@@ -233,30 +404,103 @@
         <li><b>Discografia</b><span>5 álbuns de estúdio, de <em>Innerspeaker</em> a <em>Deadbeat</em></span></li>
       </ul>
     </div>
+  </div>
+</section>
 
+<section class="disco" id="discografia">
+  <div class="wrap">
+    <h2 class="reveal" data-k="arquivo">Discografia</h2>
+    <p class="lead reveal">Cinco discos, cinco fases. Abra a ficha técnica de cada um para ver contexto, dados e um perfil sonoro na leitura de um fã.</p>
     <div class="albums">
-      <article class="album reveal"><div class="orb" style="--halo:rgba(255,157,26,.35);background:radial-gradient(circle at 35% 30%,#ffe7a8,#ff9d1a 45%,#7a2f00)"></div>
+      <article class="album hud reveal" style="--accent:#ff9d1a"><div class="orb" style="--halo:rgba(255,157,26,.35);background:radial-gradient(circle at 35% 30%,#ffe7a8,#ff9d1a 45%,#7a2f00)"></div>
+        <span class="code">LP-01</span>
         <span class="yr">2010</span><h3>Innerspeaker</h3><p>Fuzz, eco e guitarras que parecem derreter. A estreia psicodélica.</p>
-        <ul><li>Solitude Is Bliss</li><li>Lucidity</li><li>Expectation</li></ul></article>
-      <article class="album reveal"><div class="orb" style="--halo:rgba(255,45,122,.35);background:radial-gradient(circle at 35% 30%,#ffd1e3,#ff2d7a 45%,#4a0726)"></div>
+        <ul><li>Solitude Is Bliss</li><li>Lucidity</li><li>Expectation</li></ul>
+        <details class="album-more"><summary>Ficha técnica</summary><div class="more-body">
+          <p class="kicker">A estreia psicodélica</p>
+          <p>Gravado numa casa de praia no oeste australiano, o disco junta o peso do rock dos anos 60 e 70 com camadas de eco, phaser e fuzz. Parker tocou quase todos os instrumentos, e a mixagem ficou com Dave Fridmann, conhecido pelo trabalho com Flaming Lips e MGMT.</p>
+          <dl class="spec"><div><dt>Lançamento</dt><dd>Maio de 2010</dd></div><div><dt>Selo</dt><dd>Modular Recordings</dd></div><div><dt>Produção</dt><dd>Kevin Parker · mix de Dave Fridmann</dd></div><div><dt>Marco</dt><dd>J Award de álbum australiano do ano</dd></div></dl>
+          <h4>Perfil sonoro · leitura de fã</h4>
+          <div class="meters"><div class="meter" style="--v:95"><span>Fuzz</span><i></i><b>95</b></div><div class="meter" style="--v:20"><span>Sintetizador</span><i></i><b>20</b></div><div class="meter" style="--v:25"><span>Pista</span><i></i><b>25</b></div><div class="meter" style="--v:70"><span>Introspecção</span><i></i><b>70</b></div></div>
+          <h4>Faixas para começar</h4>
+          <ul class="chips"><li>It Is Not Meant to Be</li><li>Solitude Is Bliss</li><li>Lucidity</li><li>Alter Ego</li><li>Runway, Houses, City, Clouds</li></ul>
+          <p class="trivia">Ouça de fones: muitos efeitos passeiam de um lado para o outro do estéreo.</p>
+        </div></details></article>
+      <article class="album hud reveal" style="--accent:#ff2d7a"><div class="orb" style="--halo:rgba(255,45,122,.35);background:radial-gradient(circle at 35% 30%,#ffd1e3,#ff2d7a 45%,#4a0726)"></div>
+        <span class="code">LP-02</span>
         <span class="yr">2012</span><h3>Lonerism</h3><p>Sobre isolamento, com camadas de sintetizador e baterias enormes.</p>
-        <ul><li>Elephant</li><li>Feels Like We Only Go Backwards</li><li>Mind Mischief</li></ul></article>
-      <article class="album reveal"><div class="orb" style="--halo:rgba(169,139,224,.45);background:radial-gradient(circle at 35% 30%,#fff,#b79cf0 40%,#2a1260)"></div>
+        <ul><li>Elephant</li><li>Feels Like We Only Go Backwards</li><li>Mind Mischief</li></ul>
+        <details class="album-more"><summary>Ficha técnica</summary><div class="more-body">
+          <p class="kicker">Sozinho no meio da multidão</p>
+          <p>Composto entre Perth e Paris, é um disco sobre se sentir à parte. Os sintetizadores dividem espaço com as guitarras, a bateria soa gigante e a voz parece vir de longe. A mixagem, de novo, é de Dave Fridmann.</p>
+          <dl class="spec"><div><dt>Lançamento</dt><dd>Outubro de 2012</dd></div><div><dt>Selo</dt><dd>Modular Recordings</dd></div><div><dt>Produção</dt><dd>Kevin Parker · mix de Dave Fridmann</dd></div><div><dt>Marco</dt><dd>Primeira indicação ao Grammy</dd></div></dl>
+          <h4>Perfil sonoro · leitura de fã</h4>
+          <div class="meters"><div class="meter" style="--v:70"><span>Fuzz</span><i></i><b>70</b></div><div class="meter" style="--v:60"><span>Sintetizador</span><i></i><b>60</b></div><div class="meter" style="--v:35"><span>Pista</span><i></i><b>35</b></div><div class="meter" style="--v:90"><span>Introspecção</span><i></i><b>90</b></div></div>
+          <h4>Faixas para começar</h4>
+          <ul class="chips"><li>Be Above It</li><li>Apocalypse Dreams</li><li>Mind Mischief</li><li>Feels Like We Only Go Backwards</li><li>Elephant</li></ul>
+          <p class="trivia">“Elephant” é o momento mais direto do disco, puxado por um riff de glam rock.</p>
+        </div></details></article>
+      <article class="album hud reveal" style="--accent:#b79cf0"><div class="orb" style="--halo:rgba(169,139,224,.45);background:radial-gradient(circle at 35% 30%,#fff,#b79cf0 40%,#2a1260)"></div>
+        <span class="code">LP-03</span>
         <span class="yr">2015</span><h3>Currents</h3><p>A virada para o synth-pop e o groove. Um disco sobre mudança.</p>
-        <ul><li>Let It Happen</li><li>The Less I Know the Better</li><li>Eventually</li></ul></article>
-      <article class="album reveal"><div class="orb" style="--halo:rgba(242,197,61,.4);background:radial-gradient(circle at 35% 30%,#fff7d6,#f2c53d 45%,#6b4a00)"></div>
+        <ul><li>Let It Happen</li><li>The Less I Know the Better</li><li>Eventually</li></ul>
+        <details class="album-more"><summary>Ficha técnica</summary><div class="more-body">
+          <p class="kicker">A grande transformação</p>
+          <p>O primeiro álbum que Parker gravou, produziu e mixou inteiramente sozinho. As guitarras dão lugar a baixos sintetizados, grooves de R&amp;B e disco e uma produção limpa. As letras falam de mudança pessoal e do fim de uma relação, e de aceitar virar outra pessoa.</p>
+          <dl class="spec"><div><dt>Lançamento</dt><dd>Julho de 2015</dd></div><div><dt>Selo</dt><dd>Modular Recordings</dd></div><div><dt>Produção</dt><dd>Kevin Parker, inclusive a mixagem</dd></div><div><dt>Marco</dt><dd>Indicação ao Grammy de Melhor Álbum Alternativo</dd></div></dl>
+          <h4>Perfil sonoro · leitura de fã</h4>
+          <div class="meters"><div class="meter" style="--v:25"><span>Fuzz</span><i></i><b>25</b></div><div class="meter" style="--v:90"><span>Sintetizador</span><i></i><b>90</b></div><div class="meter" style="--v:70"><span>Pista</span><i></i><b>70</b></div><div class="meter" style="--v:85"><span>Introspecção</span><i></i><b>85</b></div></div>
+          <h4>Faixas para começar</h4>
+          <ul class="chips"><li>Let It Happen</li><li>The Moment</li><li>Yes I'm Changing</li><li>Eventually</li><li>The Less I Know the Better</li><li>New Person, Same Old Mistakes</li></ul>
+          <p class="trivia">“Let It Happen”, a faixa de abertura, passa dos sete minutos e muda de forma várias vezes pelo caminho.</p>
+        </div></details></article>
+      <article class="album hud reveal" style="--accent:#f2c53d"><div class="orb" style="--halo:rgba(242,197,61,.4);background:radial-gradient(circle at 35% 30%,#fff7d6,#f2c53d 45%,#6b4a00)"></div>
+        <span class="code">LP-04</span>
         <span class="yr">2020</span><h3>The Slow Rush</h3><p>Disco, house e nostalgia, obcecado pela passagem do tempo.</p>
-        <ul><li>Borderline</li><li>Lost in Yesterday</li><li>One More Year</li></ul></article>
-      <article class="album reveal"><div class="orb" style="--halo:rgba(255,59,59,.35);background:radial-gradient(circle at 35% 30%,#ffd6d6,#ff3b3b 45%,#1c1828)"></div>
+        <ul><li>Borderline</li><li>Lost in Yesterday</li><li>One More Year</li></ul>
+        <details class="album-more"><summary>Ficha técnica</summary><div class="more-body">
+          <p class="kicker">O tempo que escorre</p>
+          <p>Cinco anos depois de <em>Currents</em>, Parker volta com um disco inteiro sobre a passagem do tempo: memória, nostalgia, arrependimento e o medo de perder os momentos. O som puxa para o house dos anos 90, a disco e o soft rock, com pianos, percussão e grooves longos.</p>
+          <dl class="spec"><div><dt>Lançamento</dt><dd>Fevereiro de 2020</dd></div><div><dt>Selo</dt><dd>Modular Recordings</dd></div><div><dt>Produção</dt><dd>Kevin Parker</dd></div><div><dt>Marco</dt><dd>Saiu semanas antes de a pandemia parar as turnês</dd></div></dl>
+          <h4>Perfil sonoro · leitura de fã</h4>
+          <div class="meters"><div class="meter" style="--v:15"><span>Fuzz</span><i></i><b>15</b></div><div class="meter" style="--v:85"><span>Sintetizador</span><i></i><b>85</b></div><div class="meter" style="--v:85"><span>Pista</span><i></i><b>85</b></div><div class="meter" style="--v:80"><span>Introspecção</span><i></i><b>80</b></div></div>
+          <h4>Faixas para começar</h4>
+          <ul class="chips"><li>One More Year</li><li>Borderline</li><li>Posthumous Forgiveness</li><li>Lost in Yesterday</li><li>Is It True</li></ul>
+          <p class="trivia">“Borderline” saiu como single em 2019 e ganhou uma versão diferente no álbum.</p>
+        </div></details></article>
+      <article class="album hud reveal" style="--accent:#ff3b3b"><div class="orb" style="--halo:rgba(255,59,59,.35);background:radial-gradient(circle at 35% 30%,#ffd6d6,#ff3b3b 45%,#1c1828)"></div>
+        <span class="code">LP-05</span>
         <span class="yr">2025</span><h3>Deadbeat</h3><p>O mais eletrônico de todos, com pulso de pista de dança.</p>
-        <ul><li>End of Summer</li><li>Loser</li><li>Dracula</li></ul></article>
+        <ul><li>End of Summer</li><li>Loser</li><li>Dracula</li></ul>
+        <details class="album-more"><summary>Ficha técnica</summary><div class="more-body">
+          <p class="kicker">De volta para a pista</p>
+          <p>O álbum mais eletrônico do projeto se inspira nas raves ao ar livre da Austrália Ocidental, as chamadas <span lang="en">bush doofs</span>. Batidas retas, timbres secos e letras autodepreciativas sobre falhas e a vontade de se perder na música.</p>
+          <dl class="spec"><div><dt>Lançamento</dt><dd>Outubro de 2025</dd></div><div><dt>Selo</dt><dd>Columbia</dd></div><div><dt>Produção</dt><dd>Kevin Parker</dd></div><div><dt>Marco</dt><dd>“End of Summer” leva o Grammy Dance/Eletrônica</dd></div></dl>
+          <h4>Perfil sonoro · leitura de fã</h4>
+          <div class="meters"><div class="meter" style="--v:8"><span>Fuzz</span><i></i><b>8</b></div><div class="meter" style="--v:95"><span>Sintetizador</span><i></i><b>95</b></div><div class="meter" style="--v:98"><span>Pista</span><i></i><b>98</b></div><div class="meter" style="--v:60"><span>Introspecção</span><i></i><b>60</b></div></div>
+          <h4>Faixas para começar</h4>
+          <ul class="chips"><li>End of Summer</li><li>Loser</li><li>Dracula</li></ul>
+          <p class="trivia">“End of Summer” saiu meses antes do álbum, como primeiro sinal da nova fase.</p>
+        </div></details></article>
     </div>
   </div>
 </section>
 
+<dialog class="ficha" id="ficha" aria-labelledby="f-title">
+  <div class="ficha-in hud">
+    <div class="f-side">
+      <div class="f-orb"><div class="orb"></div></div>
+      <p class="f-code caps"></p>
+      <div class="f-nav"><button class="btn" type="button" data-step="-1" aria-label="Álbum anterior">←</button><span class="f-count caps"></span><button class="btn" type="button" data-step="1" aria-label="Próximo álbum">→</button></div>
+    </div>
+    <div class="f-main"><span class="yr f-yr"></span><h3 id="f-title"></h3><div class="f-body more-body"></div></div>
+    <button class="btn f-close" type="button" aria-label="Fechar ficha">×</button>
+  </div>
+</dialog>
+
 <section class="timeline-sec" id="linha-do-tempo">
   <div class="wrap">
-    <h2 class="reveal">Linha do tempo</h2>
+    <h2 class="reveal" data-k="cronologia">Linha do tempo</h2>
     <p class="lead reveal">De um quarto em Perth aos maiores festivais do mundo, sempre indo e voltando, como quem só vai para trás.</p>
     <div class="timeline">
       <svg class="tl-path" aria-hidden="true"><defs><linearGradient id="tlgrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000"><stop offset="0" stop-color="#ff2d7a"/><stop offset=".6" stop-color="#ff3b3b"/><stop offset="1" stop-color="#ff9d1a"/></linearGradient></defs><path class="base" fill="none" stroke="url(#tlgrad)" stroke-width="4" stroke-linecap="round"/><path class="trail" fill="none" stroke="url(#tlgrad)" stroke-width="4" stroke-linecap="round"/></svg>
@@ -292,35 +536,141 @@
   </div>
 </section>
 
+<section class="lab" id="som">
+  <div class="wrap">
+    <h2 class="reveal" data-k="sinal">Laboratório de som</h2>
+    <p class="lead reveal">Arraste pela linha do tempo e veja a onda mudar, do fuzz de garagem ao pulso eletrônico. É uma ilustração de fã, não uma análise técnica.</p>
+    <div class="lab-grid">
+      <div class="scope hud js-only reveal">
+        <div class="scope-top caps"><span>OSC-01</span><span id="lab-era">2010 · Innerspeaker</span><span class="rec"><i class="dot" aria-hidden="true"></i>ao vivo</span></div>
+        <canvas id="scope" aria-hidden="true"></canvas>
+        <div class="eq" aria-hidden="true"></div>
+        <div class="slider">
+          <label class="sr-only" for="era">Fase do som, de 2010 a 2025</label>
+          <input type="range" id="era" min="0" max="4" step="0.01" value="0" aria-valuetext="2010, Innerspeaker">
+          <div class="era-ticks"><button type="button" data-i="0">2010</button><button type="button" data-i="1">2012</button><button type="button" data-i="2">2015</button><button type="button" data-i="3">2020</button><button type="button" data-i="4">2025</button></div>
+        </div>
+      </div>
+      <div class="lab-info reveal">
+        <p class="lab-k caps" id="lab-k">Fase 01 · Garagem psicodélica</p>
+        <h3 id="lab-title" aria-live="polite">Innerspeaker</h3>
+        <p id="lab-text">Guitarras saturadas de fuzz, phaser girando e bateria setentista. A onda é suja, larga e cheia de harmônicos.</p>
+        <div class="meters" id="lab-meters">
+          <div class="meter" style="--v:95"><span>Fuzz</span><i></i><b>95</b></div>
+          <div class="meter" style="--v:20"><span>Sintetizador</span><i></i><b>20</b></div>
+          <div class="meter" style="--v:25"><span>Pista</span><i></i><b>25</b></div>
+          <div class="meter" style="--v:70"><span>Introspecção</span><i></i><b>70</b></div>
+        </div>
+        <button class="btn js-only" type="button" id="synth" aria-pressed="false">▶ Ligar sintetizador</button>
+        <p class="note js-only">O som é um sintetizador simples gerado ao vivo pelo navegador, em volume baixo. Nenhuma gravação da banda é tocada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stage-sec" id="palco">
+  <div class="wrap">
+    <h2 class="reveal" data-k="luz">Mesa de luz</h2>
+    <p class="lead reveal">Monte a iluminação do show imaginário. Cada preset puxa as cores de uma fase; a intensidade, a velocidade e os efeitos ficam com você.</p>
+    <div class="console hud haze-on reveal">
+      <svg class="stage" viewBox="0 0 800 440" role="img" aria-label="Ilustração de um palco com telão, feixes de luz e público">
+        <defs>
+          <linearGradient id="bm1" x1="0" y1="0" x2="0" y2="1"><stop class="stop1" offset="0" stop-opacity=".9"/><stop class="stop1" offset="1" stop-opacity="0"/></linearGradient>
+          <linearGradient id="bm2" x1="0" y1="0" x2="0" y2="1"><stop class="stop2" offset="0" stop-opacity=".9"/><stop class="stop2" offset="1" stop-opacity="0"/></linearGradient>
+          <linearGradient id="bm3" x1="0" y1="0" x2="0" y2="1"><stop class="stop3" offset="0" stop-opacity=".9"/><stop class="stop3" offset="1" stop-opacity="0"/></linearGradient>
+          <radialGradient id="floorglow" cx="50%" cy="0%" r="70%"><stop class="stop2" offset="0" stop-opacity=".5"/><stop class="stop2" offset="1" stop-opacity="0"/></radialGradient>
+          <clipPath id="screen"><rect x="230" y="60" width="340" height="180" rx="4"/></clipPath>
+          <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="24"/></filter>
+        </defs>
+        <rect width="800" height="440" fill="#0b0414"/>
+        <rect x="230" y="60" width="340" height="180" rx="4" fill="#120726" style="stroke:var(--b2)" stroke-opacity=".6"/>
+        <g clip-path="url(#screen)" fill="none" stroke-width="3">
+          <g class="rings">
+            <circle cx="400" cy="150" r="80" style="stroke:var(--b1)"/>
+            <circle cx="400" cy="150" r="80" style="stroke:var(--b2);animation-delay:-1.2s"/>
+            <circle cx="400" cy="150" r="80" style="stroke:var(--b3);animation-delay:-2.4s"/>
+          </g>
+        </g>
+        <circle cx="400" cy="150" r="40" fill="url(#chrome)"/>
+        <ellipse cx="386" cy="134" rx="10" ry="6" fill="#fff" opacity=".7" transform="rotate(-30 386 134)"/>
+        <g class="lasers" stroke-width="1.4" stroke-opacity=".85"><g>
+          <line x1="400" y1="150" x2="-40" y2="380"/><line x1="400" y1="150" x2="120" y2="440"/><line x1="400" y1="150" x2="300" y2="460"/>
+          <line x1="400" y1="150" x2="500" y2="460"/><line x1="400" y1="150" x2="680" y2="440"/><line x1="400" y1="150" x2="840" y2="380"/>
+        </g></g>
+        <polygon points="120,300 680,300 760,350 40,350" fill="#1a0b33"/>
+        <polygon points="120,300 680,300 760,350 40,350" fill="url(#floorglow)"/>
+        <rect x="40" y="348" width="720" height="4" style="fill:var(--b1)"/>
+        <rect x="70" y="24" width="660" height="8" fill="#2a2338"/>
+        <g class="beams">
+          <g transform="translate(110 32)"><polygon class="beam" points="0,0 -44,330 44,330" fill="url(#bm1)"/></g>
+          <g transform="translate(255 32)"><polygon class="beam r" points="0,0 -44,330 44,330" fill="url(#bm2)"/></g>
+          <g transform="translate(400 32)"><polygon class="beam" points="0,0 -44,330 44,330" fill="url(#bm3)"/></g>
+          <g transform="translate(545 32)"><polygon class="beam r" points="0,0 -44,330 44,330" fill="url(#bm2)"/></g>
+          <g transform="translate(690 32)"><polygon class="beam" points="0,0 -44,330 44,330" fill="url(#bm1)"/></g>
+        </g>
+        <g fill="#6f6a7d"><rect x="100" y="30" width="20" height="10" rx="2"/><rect x="245" y="30" width="20" height="10" rx="2"/><rect x="390" y="30" width="20" height="10" rx="2"/><rect x="535" y="30" width="20" height="10" rx="2"/><rect x="680" y="30" width="20" height="10" rx="2"/></g>
+        <g class="haze" style="fill:var(--b2)" opacity=".16" filter="url(#blur)"><ellipse cx="260" cy="330" rx="220" ry="40"/><ellipse cx="560" cy="350" rx="240" ry="36"/></g>
+        <g fill="#07020e" stroke="#07020e" stroke-width="7" stroke-linecap="round">
+          <rect x="0" y="414" width="800" height="26" stroke="none"/>
+          <circle cx="6" cy="408" r="11"/><circle cx="23" cy="404" r="9"/><circle cx="40" cy="404" r="10"/><path d="M48 414L58 378"/><circle cx="58" cy="404" r="10"/><circle cx="75" cy="408" r="9"/><circle cx="101" cy="416" r="9"/><path d="M93 426L83 390"/><circle cx="118" cy="412" r="10"/><circle cx="143" cy="412" r="9"/><circle cx="162" cy="408" r="9"/><circle cx="187" cy="404" r="9"/><circle cx="211" cy="412" r="12"/><circle cx="235" cy="412" r="11"/><circle cx="254" cy="404" r="10"/><circle cx="279" cy="412" r="12"/><circle cx="300" cy="404" r="9"/><circle cx="319" cy="408" r="11"/><circle cx="342" cy="404" r="9"/><circle cx="368" cy="412" r="11"/><circle cx="394" cy="416" r="12"/><path d="M386 426L376 390"/><circle cx="415" cy="404" r="12"/><path d="M423 414L433 378"/><circle cx="441" cy="412" r="12"/><circle cx="463" cy="416" r="9"/><circle cx="489" cy="416" r="9"/><path d="M497 426L507 390"/><circle cx="508" cy="416" r="10"/><circle cx="532" cy="408" r="9"/><circle cx="557" cy="408" r="11"/><circle cx="582" cy="416" r="11"/><circle cx="605" cy="408" r="10"/><path d="M597 418L587 382"/><circle cx="625" cy="404" r="10"/><circle cx="651" cy="412" r="10"/><circle cx="670" cy="412" r="12"/><circle cx="692" cy="404" r="10"/><circle cx="717" cy="416" r="12"/><circle cx="735" cy="416" r="12"/><path d="M727 426L717 390"/><circle cx="755" cy="408" r="12"/><path d="M747 418L737 382"/><circle cx="773" cy="408" r="9"/><circle cx="795" cy="404" r="9"/>
+        </g>
+      </svg>
+      <div class="controls js-only">
+        <fieldset>
+          <legend>Preset de cor</legend>
+          <div class="presets">
+            <button class="btn" type="button" data-c="#ff9d1a,#f2c53d,#ff3b3b" aria-pressed="false">Innerspeaker</button>
+            <button class="btn" type="button" data-c="#ff2d7a,#c9b3f5,#ff9d1a" aria-pressed="false">Lonerism</button>
+            <button class="btn" type="button" data-c="#b79cf0,#ff2d7a,#3df2ff" aria-pressed="true">Currents</button>
+            <button class="btn" type="button" data-c="#f2c53d,#ff9d1a,#fff1c2" aria-pressed="false">Slow Rush</button>
+            <button class="btn" type="button" data-c="#ff3b3b,#ff2d7a,#ffffff" aria-pressed="false">Deadbeat</button>
+          </div>
+        </fieldset>
+        <div><label class="ctl-label" for="int">Intensidade <output id="int-out">85</output></label><input type="range" id="int" min="20" max="100" value="85"></div>
+        <div><label class="ctl-label" for="spd">Velocidade <output id="spd-out">5</output></label><input type="range" id="spd" min="1" max="10" value="5"></div>
+        <fieldset>
+          <legend>Efeitos</legend>
+          <div class="toggles">
+            <button class="btn" type="button" data-fx="lasers-on" aria-pressed="false">Lasers</button>
+            <button class="btn" type="button" data-fx="haze-on" aria-pressed="true">Fumaça</button>
+            <button class="btn" type="button" data-fx="pulse-on" aria-pressed="false">Pulso</button>
+          </div>
+        </fieldset>
+      </div>
+      <p class="console-note">Arte original em SVG · nenhuma imagem oficial de palco ou da banda</p>
+    </div>
+  </div>
+</section>
+
 <section class="dates" id="datas">
   <div class="wrap">
-    <h2 class="reveal">Datas</h2>
+    <h2 class="reveal" data-k="agenda">Datas</h2>
     <p class="aside reveal"><em>(the less I know, the better)</em></p>
     <div class="date-list">
-      <article class="date reveal"><time class="d" datetime="2027-11-12">12<small>NOV</small></time><div><h3>São Paulo, SP</h3><p>Estádio imaginário do Pôr do Sol</p></div><span class="tag">Fictício</span></article>
-      <article class="date reveal"><time class="d" datetime="2027-11-14">14<small>NOV</small></time><div><h3>Rio de Janeiro, RJ</h3><p>Aterro do Tempo Líquido</p></div><span class="tag">Fictício</span></article>
-      <article class="date reveal"><time class="d" datetime="2027-11-17">17<small>NOV</small></time><div><h3>Belo Horizonte, MG</h3><p>Pedreira do Entardecer</p></div><span class="tag">Fictício</span></article>
-      <article class="date reveal"><time class="d" datetime="2027-11-19">19<small>NOV</small></time><div><h3>Brasília, DF</h3><p>Esplanada da Hora Azul</p></div><span class="tag">Fictício</span></article>
-      <article class="date reveal"><time class="d" datetime="2027-11-22">22<small>NOV</small></time><div><h3>Porto Alegre, RS</h3><p>Orla do Guaíba, hora dourada</p></div><span class="tag">Fictício</span></article>
+      <article class="date reveal"><time class="d" datetime="2027-11-12">12<small>NOV</small></time><div><h3>São Paulo, SP</h3><p>Estádio imaginário do Pôr do Sol</p><p class="geo">23.55° S · 46.63° O</p></div><span class="tag">Fictício</span></article>
+      <article class="date reveal"><time class="d" datetime="2027-11-14">14<small>NOV</small></time><div><h3>Rio de Janeiro, RJ</h3><p>Aterro do Tempo Líquido</p><p class="geo">22.91° S · 43.17° O</p></div><span class="tag">Fictício</span></article>
+      <article class="date reveal"><time class="d" datetime="2027-11-17">17<small>NOV</small></time><div><h3>Belo Horizonte, MG</h3><p>Pedreira do Entardecer</p><p class="geo">19.92° S · 43.94° O</p></div><span class="tag">Fictício</span></article>
+      <article class="date reveal"><time class="d" datetime="2027-11-19">19<small>NOV</small></time><div><h3>Brasília, DF</h3><p>Esplanada da Hora Azul</p><p class="geo">15.79° S · 47.88° O</p></div><span class="tag">Fictício</span></article>
+      <article class="date reveal"><time class="d" datetime="2027-11-22">22<small>NOV</small></time><div><h3>Porto Alegre, RS</h3><p>Orla do Guaíba, hora dourada</p><p class="geo">30.03° S · 51.23° O</p></div><span class="tag">Fictício</span></article>
     </div>
   </div>
 </section>
 
 <section class="setlist" id="setlist">
   <div class="wrap">
-    <h2 class="reveal">Setlist dos sonhos</h2>
+    <h2 class="reveal" data-k="playlist">Setlist dos sonhos</h2>
     <p class="lead reveal">Uma lista de desejos de fã. A ordem é só vontade.</p>
     <ol class="tracks reveal">
-      <li>Let It Happen</li>
-      <li>Borderline</li>
-      <li>The Less I Know the Better</li>
-      <li>Eventually</li>
-      <li>Feels Like We Only Go Backwards</li>
-      <li>Elephant</li>
-      <li>One More Year</li>
-      <li>Is It True</li>
-      <li>New Person, Same Old Mistakes</li>
-      <li>Apocalypse Dreams</li>
+      <li>Let It Happen <abbr title="Currents, 2015">CUR·15</abbr></li>
+      <li>Borderline <abbr title="The Slow Rush, 2020">TSR·20</abbr></li>
+      <li>The Less I Know the Better <abbr title="Currents, 2015">CUR·15</abbr></li>
+      <li>Eventually <abbr title="Currents, 2015">CUR·15</abbr></li>
+      <li>Feels Like We Only Go Backwards <abbr title="Lonerism, 2012">LON·12</abbr></li>
+      <li>Elephant <abbr title="Lonerism, 2012">LON·12</abbr></li>
+      <li>One More Year <abbr title="The Slow Rush, 2020">TSR·20</abbr></li>
+      <li>Is It True <abbr title="The Slow Rush, 2020">TSR·20</abbr></li>
+      <li>New Person, Same Old Mistakes <abbr title="Currents, 2015">CUR·15</abbr></li>
+      <li>Apocalypse Dreams <abbr title="Lonerism, 2012">LON·12</abbr></li>
     </ol>
     <p class="note">Títulos citados apenas como referência de fã; nenhuma letra ou áudio é reproduzido aqui.</p>
   </div>
@@ -328,12 +678,12 @@
 
 <section class="tickets" id="ingressos">
   <div class="wrap">
-    <h2 class="reveal">Setores</h2>
+    <h2 class="reveal" data-k="acesso">Setores</h2>
     <p class="lead reveal">Escolha onde você assistiria. Todos esgotados desde sempre.</p>
     <div class="tier-row">
-      <div class="tier reveal"><h3>Pista</h3><div class="price">R$ ∞</div><p>Dançar descalço no gramado imaginário.</p><button disabled>Indisponível</button></div>
-      <div class="tier hot reveal"><h3>Camarote</h3><div class="price">R$ ∞</div><p>Vista total para o pôr do sol eterno.</p><button disabled>Indisponível</button></div>
-      <div class="tier reveal"><h3>Arquibancada</h3><div class="price">R$ ∞</div><p>Ver o palco girar lá do alto.</p><button disabled>Indisponível</button></div>
+      <div class="tier hud reveal"><h3>Pista</h3><div class="price">R$ ∞</div><p>Dançar descalço no gramado imaginário.</p><button disabled>Indisponível</button></div>
+      <div class="tier hot hud reveal"><h3>Camarote</h3><div class="price">R$ ∞</div><p>Vista total para o pôr do sol eterno.</p><button disabled>Indisponível</button></div>
+      <div class="tier hud reveal"><h3>Arquibancada</h3><div class="price">R$ ∞</div><p>Ver o palco girar lá do alto.</p><button disabled>Indisponível</button></div>
     </div>
   </div>
 </section>
@@ -341,6 +691,7 @@
 <footer>
   <div class="big">Feito por fã, para fãs.</div>
   <p class="verse">Is it something more than that?</p>
+  <p class="build">HTML · CSS · JS puro · sem afiliação oficial</p>
 </footer>
 
 <script>
@@ -379,6 +730,166 @@
   new IntersectionObserver(([e])=>{heroVisible=e.isIntersecting;sync()}).observe(document.querySelector('.hero'));
   document.addEventListener('visibilitychange',sync);
   sync();
+
+  // Contagem regressiva para a (fictícia) primeira data
+  const cd=document.querySelector('.countdown'),cdTarget=Date.parse(cd.dataset.target),cdSegs=cd.querySelectorAll('b');
+  function tickCd(){
+    const s=Math.max(0,Math.floor((cdTarget-Date.now())/1000));
+    [Math.floor(s/86400),Math.floor(s%86400/3600),Math.floor(s%3600/60),s%60].forEach((v,i)=>cdSegs[i].textContent=String(v).padStart(i?2:3,'0'));
+  }
+  tickCd();setInterval(tickCd,1000);
+
+  // Barra de progresso da rolagem, na faixa do topo
+  const bar=document.querySelector('.progress');let barQueued=false;
+  function updateBar(){barQueued=false;const max=document.documentElement.scrollHeight-innerHeight;bar.style.transform=`scaleX(${max>0?scrollY/max:0})`}
+  addEventListener('scroll',()=>{if(!barQueued){barQueued=true;requestAnimationFrame(updateBar)}},{passive:true});
+  updateBar();
+
+  // Fichas dos álbuns: o resumo abre uma janela com os detalhes (sem JS, o <details> abre no próprio card)
+  const dlg=document.getElementById('ficha'),albums=[...document.querySelectorAll('.album')];
+  let cur=0;
+  function openAlbum(i){
+    cur=(i+albums.length)%albums.length;const a=albums[cur];
+    dlg.style.setProperty('--accent',a.style.getPropertyValue('--accent'));
+    dlg.querySelector('.f-orb .orb').style.cssText=a.querySelector('.orb').style.cssText;
+    dlg.querySelector('.f-code').textContent=a.querySelector('.code').textContent+' · estúdio';
+    dlg.querySelector('.f-yr').textContent=a.querySelector('.yr').textContent;
+    dlg.querySelector('#f-title').textContent=a.querySelector('h3').textContent;
+    dlg.querySelector('.f-body').innerHTML=a.querySelector('.more-body').innerHTML;
+    dlg.querySelector('.f-count').textContent=`${String(cur+1).padStart(2,'0')} / ${String(albums.length).padStart(2,'0')}`;
+    dlg.classList.remove('show');void dlg.offsetWidth;dlg.classList.add('show');
+    if(!dlg.open)dlg.showModal();
+    dlg.scrollTop=0;
+  }
+  if(dlg.showModal){
+    albums.forEach((a,i)=>a.querySelector('summary').addEventListener('click',e=>{e.preventDefault();openAlbum(i)}));
+    dlg.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>openAlbum(cur+ +b.dataset.step)));
+    dlg.querySelector('.f-close').addEventListener('click',()=>dlg.close());
+    dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+    dlg.addEventListener('keydown',e=>{if(e.key==='ArrowRight')openAlbum(cur+1);else if(e.key==='ArrowLeft')openAlbum(cur-1)});
+  }
+
+  // Laboratório de som: osciloscópio que muda de forma conforme a fase
+  const ERAS=[
+    {y:2010,t:'Innerspeaker',k:'Garagem psicodélica',c:'#ff9d1a',m:[95,20,25,70],x:'Guitarras saturadas de fuzz, phaser girando e bateria setentista. A onda é suja, larga e cheia de harmônicos.'},
+    {y:2012,t:'Lonerism',k:'Psicodelia em camadas',c:'#ff2d7a',m:[70,60,35,90],x:'Os sintetizadores entram e se empilham sobre as guitarras. A onda ganha várias camadas que balançam juntas, meio fora de foco.'},
+    {y:2015,t:'Currents',k:'Synth-pop e groove',c:'#b79cf0',m:[25,90,70,85],x:'O baixo sintetizado assume o centro e a compressão faz tudo respirar no ritmo. A onda fica lisa e pulsa a cada batida.'},
+    {y:2020,t:'The Slow Rush',k:'Disco, house e nostalgia',c:'#f2c53d',m:[15,85,85,80],x:'Pianos de house, bumbo marcando os quatro tempos e grooves de disco. Picos regulares aparecem na onda, como um relógio.'},
+    {y:2025,t:'Deadbeat',k:'Pista eletrônica',c:'#ff3b3b',m:[8,95,98,60],x:'Pulso de rave, bumbo constante e timbres mais secos e quadrados. A onda vira quase um sinal digital.'}
+  ];
+  const TAU=Math.PI*2,saw=v=>2*(v-Math.floor(v))-1;
+  const WAVES=[
+    u=>Math.tanh(3*(Math.sin(TAU*5*u)+.6*Math.sin(TAU*7.5*u+2*Math.sin(TAU*.5*u))))*.72+(Math.random()-.5)*.2,
+    u=>.42*Math.sin(TAU*4*u+1.5*Math.sin(TAU*.7*u))+.3*Math.sin(TAU*6*u)+.18*Math.sin(TAU*13*u),
+    u=>{const ph=(u*2)%1;return(.25+.75*(1-Math.exp(-ph*5)))*.85*Math.sin(TAU*5*u)},
+    u=>{const ph=(u*2)%1;return .6*Math.exp(-ph*12)*Math.sin(ph*60)+.32*saw(4*u)*(.5+.5*(1-Math.exp(-ph*4)))},
+    u=>{const ph=(u*2.2)%1;return .6*Math.exp(-ph*9)*Math.sin(ph*45)+.32*Math.sign(Math.sin(TAU*8*u))*(1-Math.exp(-ph*6))}
+  ];
+  const eraIn=document.getElementById('era'),cv=document.getElementById('scope'),ctx=cv.getContext('2d');
+  const eq=document.querySelector('.eq'),eqBars=[];
+  for(let i=0;i<32;i++){const b=document.createElement('i');eq.appendChild(b);eqBars.push(b)}
+  const labMeters=[...document.querySelectorAll('#lab-meters .meter')],eraTicks=[...document.querySelectorAll('.era-ticks button')];
+  const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  let ev=0,shownEra=-1,mix=ERAS[0].m.slice();
+  function eraState(){
+    const i0=Math.min(3,Math.floor(ev)),f=ev-i0,a=ERAS[i0],b=ERAS[i0+1];
+    const c=hex(a.c).map((v,j)=>Math.round(v+(hex(b.c)[j]-v)*f));
+    return{i0,f,col:`rgb(${c})`,m:a.m.map((v,j)=>v+(b.m[j]-v)*f)};
+  }
+  function sizeScope(){const r=devicePixelRatio||1;cv.width=cv.clientWidth*r;cv.height=cv.clientHeight*r}
+  function drawScope(t){
+    const w=cv.width,h=cv.height,{i0,f,col,m}=eraState();
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='rgba(169,139,224,.12)';ctx.lineWidth=1;ctx.beginPath();
+    for(let i=1;i<10;i++){ctx.moveTo(w*i/10,0);ctx.lineTo(w*i/10,h)}
+    for(let i=1;i<6;i++){ctx.moveTo(0,h*i/6);ctx.lineTo(w,h*i/6)}
+    ctx.stroke();
+    const r=devicePixelRatio||1;ctx.beginPath();
+    for(let px=0;px<=w;px+=2*r){
+      const u=t*.5+px/w*2,y=(1-f)*WAVES[i0](u)+f*WAVES[i0+1](u);
+      px?ctx.lineTo(px,h/2-y*h*.38):ctx.moveTo(px,h/2-y*h*.38);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=2*r;ctx.shadowColor=col;ctx.shadowBlur=14*r;ctx.stroke();ctx.shadowBlur=0;
+    // espectro ilustrativo: graves seguem a pista, médios o synth, agudos o fuzz
+    const beat=Math.exp(-((t*2)%1)*5);
+    eqBars.forEach((b,j)=>{
+      const p=j/31,base=(1-p)*(m[2]/100)*(.4+.6*beat)+Math.sin(p*Math.PI)*(m[1]/100)*.7+p*(m[0]/100)*.8;
+      const v=Math.min(1,Math.max(.06,base*(.55+.45*Math.abs(Math.sin(t*3+j*1.7)))));
+      b.style.transform=`scaleY(${v.toFixed(3)})`;
+    });
+  }
+  function updateLab(){
+    const {m}=eraState(),r=Math.round(ev),e=ERAS[r];mix=m;
+    labMeters.forEach((el,j)=>{el.style.setProperty('--v',m[j].toFixed(0));el.querySelector('b').textContent=m[j].toFixed(0)});
+    if(r!==shownEra){
+      shownEra=r;
+      document.getElementById('lab-k').textContent=`Fase ${String(r+1).padStart(2,'0')} · ${e.k}`;
+      document.getElementById('lab-title').textContent=e.t;
+      document.getElementById('lab-text').textContent=e.x;
+      document.getElementById('lab-era').textContent=`${e.y} · ${e.t}`;
+      eraIn.setAttribute('aria-valuetext',`${e.y}, ${e.t}`);
+      eraTicks.forEach((b,i)=>b.setAttribute('aria-current',i===r));
+    }
+    setAudio();
+    if(!labRunning)drawScope(performance.now()/1000);
+  }
+  let labRaf=0,labRunning=false,labVisible=false,tween=0;
+  function labLoop(t){drawScope(t/1000);labRaf=requestAnimationFrame(labLoop)}
+  function labSync(){
+    const want=!still&&labVisible&&!document.hidden;
+    if(want&&!labRunning){labRunning=true;labRaf=requestAnimationFrame(labLoop)}
+    else if(!want&&labRunning){labRunning=false;cancelAnimationFrame(labRaf)}
+  }
+  eraIn.addEventListener('input',()=>{cancelAnimationFrame(tween);ev=+eraIn.value;updateLab()});
+  eraTicks.forEach(b=>b.addEventListener('click',()=>{
+    const from=ev,to=+b.dataset.i,t0=performance.now();cancelAnimationFrame(tween);
+    const step=now=>{const k=still?1:Math.min(1,(now-t0)/600),e=1-Math.pow(1-k,3);ev=from+(to-from)*e;eraIn.value=ev;updateLab();if(k<1)tween=requestAnimationFrame(step)};
+    tween=requestAnimationFrame(step);
+  }));
+  new IntersectionObserver(([e])=>{labVisible=e.isIntersecting;labSync();if(!labVisible&&audioOn)toggleAudio()}).observe(document.querySelector('.lab'));
+  document.addEventListener('visibilitychange',labSync);
+
+  // Sintetizador simples (Web Audio), desligado por padrão
+  const synthBtn=document.getElementById('synth');let ac=null,an=null,audioOn=false;
+  const curve=k=>{const c=new Float32Array(512);for(let i=0;i<512;i++){const v=i/511*2-1;c[i]=Math.tanh(k*v)/Math.tanh(k)}return c};
+  function setAudio(){
+    if(!an)return;const r=Math.round(ev),now=ac.currentTime;
+    an.o1.type=an.o2.type=['sawtooth','sawtooth','triangle','sawtooth','square'][r];
+    an.sh.curve=curve(1+mix[0]/10);
+    an.fl.frequency.setTargetAtTime(260+mix[1]*14,now,.1);
+    an.lfo.frequency.setTargetAtTime(r<2?.5:r===4?2.2:2,now,.1);
+    an.lfoG.gain.setTargetAtTime(mix[2]/100*.45,now,.1);
+  }
+  function toggleAudio(){
+    if(!audioOn){
+      const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+      if(!ac){
+        ac=new AC();
+        const o1=ac.createOscillator(),o2=ac.createOscillator(),sh=ac.createWaveShaper(),fl=ac.createBiquadFilter(),amp=ac.createGain(),lfo=ac.createOscillator(),lfoG=ac.createGain(),out=ac.createGain();
+        o1.frequency.value=110;o2.frequency.value=164.8;o2.detune.value=7;fl.type='lowpass';amp.gain.value=.5;out.gain.value=0;
+        o1.connect(sh);o2.connect(sh);sh.connect(fl);fl.connect(amp);amp.connect(out);out.connect(ac.destination);lfo.connect(lfoG);lfoG.connect(amp.gain);
+        o1.start();o2.start();lfo.start();an={o1,o2,sh,fl,lfo,lfoG,out};
+      }
+      ac.resume();setAudio();an.out.gain.setTargetAtTime(.05,ac.currentTime,.2);
+    }else an.out.gain.setTargetAtTime(0,ac.currentTime,.08);
+    audioOn=!audioOn;
+    synthBtn.setAttribute('aria-pressed',audioOn);
+    synthBtn.textContent=audioOn?'■ Desligar sintetizador':'▶ Ligar sintetizador';
+  }
+  synthBtn.addEventListener('click',toggleAudio);
+  sizeScope();updateLab();
+  addEventListener('resize',()=>{sizeScope();if(!labRunning)drawScope(performance.now()/1000)});
+
+  // Mesa de luz
+  const con=document.querySelector('.console');
+  con.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{
+    b.dataset.c.split(',').forEach((c,i)=>con.style.setProperty(`--b${i+1}`,c));
+    con.querySelectorAll('[data-c]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  }));
+  con.querySelectorAll('[data-fx]').forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-pressed',con.classList.toggle(b.dataset.fx))));
+  const intIn=document.getElementById('int'),spdIn=document.getElementById('spd');
+  intIn.addEventListener('input',()=>{con.style.setProperty('--int',intIn.value/100);document.getElementById('int-out').textContent=intIn.value});
+  spdIn.addEventListener('input',()=>{con.style.setProperty('--spd',(6.2-spdIn.value*.6).toFixed(2)+'s');document.getElementById('spd-out').textContent=spdIn.value});
 
   // Fio em zigue-zague ligando as esferas da linha do tempo
   const tl=document.querySelector('.timeline'),tlPaths=tl.querySelectorAll('.tl-path path');

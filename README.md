@@ -6,9 +6,12 @@ Landing page conceitual de um show **imaginário** do Tame Impala no Brasil, com
 
 ## What's inside
 
-- Hero com título, linhas animadas em SVG e uma esfera cromada
-- Quem é Tame Impala: o projeto de Kevin Parker e cards dos cinco álbuns, de *Innerspeaker* a *Deadbeat*, com faixas de destaque
+- Hero com título, linhas animadas em SVG, uma esfera cromada, moldura de HUD e contagem regressiva para a primeira data (fictícia)
+- Quem é Tame Impala: o projeto de Kevin Parker em poucas linhas
+- Discografia: cards dos cinco álbuns, de *Innerspeaker* a *Deadbeat*, que abrem uma ficha técnica com contexto, dados, perfil sonoro e faixas para começar
 - Linha do tempo em zigue-zague, de 2007 a 2026, com esferas cromadas ligadas por um fio colorido que vai e volta
+- Laboratório de som: um osciloscópio que muda de forma conforme você arrasta pelas fases, com um sintetizador opcional gerado no navegador, so let it happen
+- Mesa de luz: um palco em SVG com presets de cor por álbum, intensidade, velocidade, lasers, fumaça e pulso
 - Datas (São Paulo, Rio de Janeiro, Belo Horizonte, Brasília e Porto Alegre), because the less I know, the better
 - Setlist dos sonhos, uma lista de desejos de fã
 - Cards de setores: Pista, Camarote e Arquibancada (botões desativados)
@@ -26,7 +29,7 @@ As fontes são carregadas do Google Fonts, então é preciso estar online para v
 
 ## Tecnologias
 
-HTML, CSS e JavaScript puro. As linhas do hero são geradas em SVG e se deformam ao redor da esfera; as animações respeitam `prefers-reduced-motion` e o layout se adapta ao celular. No dependencies, no new person, same old mistakes to debug.
+HTML, CSS e JavaScript puro. As linhas do hero são geradas em SVG e se deformam ao redor da esfera; o osciloscópio é desenhado em `<canvas>`, o sintetizador usa Web Audio e as fichas dos álbuns abrem num `<dialog>` (sem JavaScript, viram um `<details>` comum). As animações respeitam `prefers-reduced-motion` e o layout se adapta ao celular. No dependencies, no new person, same old mistakes to debug.
 
 ## Direitos autorais
 
