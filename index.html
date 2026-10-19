@@ -49,6 +49,27 @@
   h2{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--gold);margin-bottom:10px}
   .lead{max-width:560px;color:var(--mist);font-size:1.1rem}
 
+
+  /* Quem é */
+  .about-grid{margin-top:36px;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+  .about-text p{color:var(--mist);font-size:1.1rem;margin-bottom:18px}
+  .about-text strong{color:var(--gold);font-weight:600}
+  .facts{display:grid;gap:12px;list-style:none}
+  .facts li{padding:18px 22px;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);border-left:4px solid var(--amber)}
+  .facts b{display:block;color:var(--gold);font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+  .facts span{color:#fff;font-size:1.05rem}
+
+  .albums{margin-top:64px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+  .album{padding:22px 18px 20px;background:rgba(26,11,51,.92);border:1px solid rgba(169,139,224,.35);transition:transform .3s,border-color .3s}
+  .album:hover{transform:translateY(-6px);border-color:var(--gold)}
+  .orb{width:64px;height:64px;border-radius:50%;margin-bottom:16px;box-shadow:0 0 30px var(--halo)}
+  .album .yr{color:var(--lilac);font-size:.82rem;letter-spacing:.16em;font-weight:600}
+  .album h3{color:var(--gold);font-size:1.15rem;line-height:1.25;margin:2px 0 8px}
+  .album p{color:var(--mist);font-size:.95rem;line-height:1.5}
+  .album ul{list-style:none;margin-top:12px;border-top:1px solid rgba(169,139,224,.25);padding-top:10px}
+  .album li{color:#fff;font-size:.92rem;padding:3px 0}
+  .album li::before{content:"◦ ";color:var(--pink)}
+
   /* Datas */
   .date-list{margin-top:36px;display:grid;gap:12px}
   .date{display:grid;grid-template-columns:100px 1fr auto;gap:22px;align-items:center;padding:20px 26px;
@@ -87,8 +108,11 @@
   .js .reveal{opacity:0;transform:translateY(32px);transition:opacity .8s,transform .8s}
   .js .reveal.in{opacity:1;transform:none}
 
+  @media (max-width:1000px){.albums{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:820px){
     .tier-row{grid-template-columns:1fr}
+    .about-grid{grid-template-columns:1fr;gap:28px}
+    .albums{grid-template-columns:1fr 1fr}
     .tracks{columns:1}
     .date{grid-template-columns:1fr;text-align:center;gap:8px;border-left-width:1px;border-top:4px solid var(--pink)}
     .tag{justify-self:center}
@@ -99,6 +123,7 @@
     .banner .short{display:inline}
     .banner{font-size:.82rem;padding:8px 16px}
   }
+  @media (max-width:480px){.albums{grid-template-columns:1fr}}
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{transition:none!important}
     .js .reveal{opacity:1;transform:none}
@@ -142,6 +167,43 @@
     </div>
   </div>
 </header>
+
+<section class="about" id="quem">
+  <div class="wrap">
+    <h2 class="reveal">Quem é Tame Impala</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>Tame Impala é o projeto musical de <strong>Kevin Parker</strong>, de Perth, na Austrália. Começou em 2007 como psicodelia de garagem, cheia de guitarras com fuzz e bateria pesada, e foi se transformando em algo mais sintético, dançante e confessional.</p>
+        <p>No estúdio, Parker compõe, toca, grava e produz quase tudo sozinho. Nos palcos, uma banda o acompanha e transforma as faixas em longas viagens de luz e som.</p>
+        <p>O tema que atravessa a obra é o tempo: mudar, ficar para trás, seguir em frente. Por isso esta página tem um pôr do sol que nunca termina.</p>
+      </div>
+      <ul class="facts reveal">
+        <li><b>Origem</b><span>Perth, Austrália · 2007</span></li>
+        <li><b>Mente por trás</b><span>Kevin Parker, multi-instrumentista e produtor</span></li>
+        <li><b>Som</b><span>Rock psicodélico, synth-pop, disco e groove</span></li>
+        <li><b>Discografia</b><span>5 álbuns de estúdio, de <em>Innerspeaker</em> a <em>Deadbeat</em></span></li>
+      </ul>
+    </div>
+
+    <div class="albums">
+      <article class="album reveal"><div class="orb" style="--halo:rgba(255,157,26,.35);background:radial-gradient(circle at 35% 30%,#ffe7a8,#ff9d1a 45%,#7a2f00)"></div>
+        <span class="yr">2010</span><h3>Innerspeaker</h3><p>Fuzz, eco e guitarras que parecem derreter. A estreia psicodélica.</p>
+        <ul><li>Solitude Is Bliss</li><li>Lucidity</li><li>Expectation</li></ul></article>
+      <article class="album reveal"><div class="orb" style="--halo:rgba(255,45,122,.35);background:radial-gradient(circle at 35% 30%,#ffd1e3,#ff2d7a 45%,#4a0726)"></div>
+        <span class="yr">2012</span><h3>Lonerism</h3><p>Sobre isolamento, com camadas de sintetizador e baterias enormes.</p>
+        <ul><li>Elephant</li><li>Feels Like We Only Go Backwards</li><li>Mind Mischief</li></ul></article>
+      <article class="album reveal"><div class="orb" style="--halo:rgba(169,139,224,.45);background:radial-gradient(circle at 35% 30%,#fff,#b79cf0 40%,#2a1260)"></div>
+        <span class="yr">2015</span><h3>Currents</h3><p>A virada para o synth-pop e o groove. Um disco sobre mudança.</p>
+        <ul><li>Let It Happen</li><li>The Less I Know the Better</li><li>Eventually</li></ul></article>
+      <article class="album reveal"><div class="orb" style="--halo:rgba(242,197,61,.4);background:radial-gradient(circle at 35% 30%,#fff7d6,#f2c53d 45%,#6b4a00)"></div>
+        <span class="yr">2020</span><h3>The Slow Rush</h3><p>Disco, house e nostalgia, obcecado pela passagem do tempo.</p>
+        <ul><li>Borderline</li><li>Lost in Yesterday</li><li>One More Year</li></ul></article>
+      <article class="album reveal"><div class="orb" style="--halo:rgba(255,59,59,.35);background:radial-gradient(circle at 35% 30%,#ffd6d6,#ff3b3b 45%,#1c1828)"></div>
+        <span class="yr">2025</span><h3>Deadbeat</h3><p>O mais eletrônico de todos, com pulso de pista de dança.</p>
+        <ul><li>End of Summer</li><li>Loser</li><li>Dracula</li></ul></article>
+    </div>
+  </div>
+</section>
 
 <section class="dates" id="datas">
   <div class="wrap">
