@@ -92,7 +92,21 @@
   .js .tl-item .tl-card{opacity:0;transform:translateX(-40px);transition:opacity .8s,transform .8s,border-color .3s}
   .js .tl-item:nth-child(even) .tl-card{transform:translateX(40px)}
   .js .tl-item.in .tl-card{opacity:1;transform:none}
-  .tl-node{transition:transform .3s}
+  .tl-node{transition:transform .3s,box-shadow .4s}
+  /* Ampulheta que desce pelo fio conforme a rolagem */
+  .tl-path .base{opacity:.22}
+  .hourglass{display:none;position:absolute;left:0;top:0;width:40px;height:56px;margin:-28px 0 0 -20px;z-index:2;pointer-events:none;
+    filter:drop-shadow(0 0 14px rgba(255,157,26,.55));will-change:transform}
+  .js .hourglass{display:block}
+  .hourglass svg{display:block;width:100%;height:100%;animation:sway 3.2s ease-in-out infinite;transform-origin:50% 50%}
+  .hourglass.flip svg{animation:flip .9s cubic-bezier(.6,0,.3,1) forwards}
+  .hourglass .stream{stroke-dasharray:3 4;animation:fall .5s linear infinite}
+  .hourglass.idle .stream{opacity:0}
+  @keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  @keyframes fall{to{stroke-dashoffset:-7}}
+  @keyframes flip{from{transform:rotate(0)}to{transform:rotate(180deg)}}
+  .tl-item.passed .tl-node{box-shadow:0 0 0 3px var(--gold),0 0 28px rgba(242,197,61,.8)}
+
   .tl-item:hover .tl-node{transform:scale(1.25)}
   .tl-year{display:block;font-family:var(--display);font-weight:700;font-size:2.4rem;line-height:1;color:var(--gold)}
   .tl-card h3{color:#fff;font-size:1.2rem;margin:8px 0 6px}
@@ -160,6 +174,7 @@
   }
   @media (max-width:480px){.albums{grid-template-columns:1fr}}
   @media (prefers-reduced-motion:reduce){
+    .hourglass svg,.hourglass .stream{animation:none!important}
     *,*::before,*::after{transition:none!important}
     .js .reveal,.js .tl-item .tl-card{opacity:1;transform:none}
   }
@@ -244,7 +259,23 @@
     <h2 class="reveal">Linha do tempo</h2>
     <p class="lead reveal">De um quarto em Perth aos maiores festivais do mundo, sempre indo e voltando, como quem só vai para trás.</p>
     <div class="timeline">
-      <svg class="tl-path" aria-hidden="true"><defs><linearGradient id="tlgrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000"><stop offset="0" stop-color="#ff2d7a"/><stop offset=".6" stop-color="#ff3b3b"/><stop offset="1" stop-color="#ff9d1a"/></linearGradient></defs><path fill="none" stroke="url(#tlgrad)" stroke-width="4" stroke-linecap="round"/></svg>
+      <svg class="tl-path" aria-hidden="true"><defs><linearGradient id="tlgrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000"><stop offset="0" stop-color="#ff2d7a"/><stop offset=".6" stop-color="#ff3b3b"/><stop offset="1" stop-color="#ff9d1a"/></linearGradient></defs><path class="base" fill="none" stroke="url(#tlgrad)" stroke-width="4" stroke-linecap="round"/><path class="trail" fill="none" stroke="url(#tlgrad)" stroke-width="4" stroke-linecap="round"/></svg>
+      <div class="hourglass idle" aria-hidden="true">
+        <svg viewBox="0 0 40 56">
+          <defs>
+            <clipPath id="glass"><path d="M7 5H33C33 18 23 23 21.2 28C23 33 33 38 33 51H7C7 38 17 33 18.8 28C17 23 7 18 7 5Z"/></clipPath>
+            <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2c53d"/><stop offset="1" stop-color="#ff9d1a"/></linearGradient>
+          </defs>
+          <g clip-path="url(#glass)">
+            <rect class="sand-top" x="0" y="8" width="40" height="20" fill="url(#sand)"/>
+            <rect class="sand-bottom" x="0" y="51" width="40" height="0" fill="url(#sand)"/>
+            <line class="stream" x1="20" y1="28" x2="20" y2="51" stroke="#f2c53d" stroke-width="1.6"/>
+          </g>
+          <path d="M7 5H33C33 18 23 23 21.2 28C23 33 33 38 33 51H7C7 38 17 33 18.8 28C17 23 7 18 7 5Z" fill="rgba(201,179,245,.12)" stroke="#c9b3f5" stroke-width="1.6"/>
+          <rect x="3" y="1.5" width="34" height="4" rx="2" fill="#f2c53d"/>
+          <rect x="3" y="50.5" width="34" height="4" rx="2" fill="#f2c53d"/>
+        </svg>
+      </div>
       <ol class="tl-list">
       <li class="tl-item reveal"><span class="tl-node" aria-hidden="true"></span><div class="tl-card"><time class="tl-year">2007</time><h3>Um quarto em Perth</h3><p>Kevin Parker começa a gravar sozinho, em casa, as demos que viram Tame Impala. O nome vem do impala, antílope africano.</p></div></li>
       <li class="tl-item reveal"><span class="tl-node" aria-hidden="true"></span><div class="tl-card"><time class="tl-year">2008</time><h3>O primeiro EP</h3><p>Sai o EP <em>Tame Impala</em>. O fuzz e a bateria setentista chamam atenção na cena australiana.</p></div></li>
@@ -350,7 +381,7 @@
   sync();
 
   // Fio em zigue-zague ligando as esferas da linha do tempo
-  const tl=document.querySelector('.timeline'),tlPath=tl.querySelector('.tl-path path');
+  const tl=document.querySelector('.timeline'),tlPaths=tl.querySelectorAll('.tl-path path');
   function drawTimeline(){
     const box=tl.getBoundingClientRect();
     const pts=[...tl.querySelectorAll('.tl-node')].map(n=>{const r=n.getBoundingClientRect();return[r.left+r.width/2-box.left,r.top+r.height/2-box.top]});
@@ -360,12 +391,44 @@
       const[a,b]=pts[i-1],[c,e]=pts[i],my=(b+e)/2;
       d+=` C${a} ${my} ${c} ${my} ${c} ${e}`;
     }
-    tlPath.setAttribute('d',d);
+    tlPaths.forEach(p=>p.setAttribute('d',d));
     document.getElementById('tlgrad').setAttribute('y2',box.height);
   }
-  drawTimeline();
-  addEventListener('resize',drawTimeline);
-  document.fonts&&document.fonts.ready.then(drawTimeline);
+
+  // Ampulheta: desce pelo fio conforme a rolagem, a areia escorre e as esferas acendem
+  const hg=tl.querySelector('.hourglass'),trail=tl.querySelector('.tl-path .trail');
+  const sandTop=hg.querySelector('.sand-top'),sandBot=hg.querySelector('.sand-bottom');
+  const tlItems=[...tl.querySelectorAll('.tl-item')];
+  let pathLen=0,nodeLens=[],lastP=-1,done=false,hgQueued=false;
+  function measure(){
+    pathLen=trail.getTotalLength();
+    trail.style.strokeDasharray=pathLen;
+    // posição de cada esfera ao longo do fio (aproximada pela altura)
+    const box=tl.getBoundingClientRect();
+    nodeLens=tlItems.map(li=>{const r=li.querySelector('.tl-node').getBoundingClientRect();return r.top+r.height/2-box.top});
+    lastP=-1;updateHourglass();
+  }
+  function updateHourglass(){
+    hgQueued=false;
+    const box=tl.getBoundingClientRect();
+    const p=Math.min(1,Math.max(0,(innerHeight*.55-box.top)/box.height));
+    if(Math.abs(p-lastP)<.0005)return;lastP=p;
+    const pt=trail.getPointAtLength(p*pathLen);
+    hg.style.transform=`translate(${pt.x}px,${pt.y}px)`;
+    trail.style.strokeDashoffset=pathLen*(1-p);
+    sandTop.setAttribute('y',8+20*p);sandTop.setAttribute('height',20*(1-p));
+    sandBot.setAttribute('y',51-21*p);sandBot.setAttribute('height',21*p);
+    hg.classList.toggle('idle',p<=0||p>=1);
+    tlItems.forEach((li,i)=>li.classList.toggle('passed',pt.y>=nodeLens[i]-2));
+    // vira a ampulheta quando o tempo acaba
+    if(p>=1&&!done){done=true;hg.classList.add('flip')}
+    if(p<1&&done){done=false;hg.classList.remove('flip')}
+  }
+  function onTimelineChange(){drawTimeline();measure()}
+  onTimelineChange();
+  addEventListener('resize',onTimelineChange);
+  document.fonts&&document.fonts.ready.then(onTimelineChange);
+  addEventListener('scroll',()=>{if(!hgQueued){hgQueued=true;requestAnimationFrame(updateHourglass)}},{passive:true});
 
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
